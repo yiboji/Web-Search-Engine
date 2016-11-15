@@ -1,0 +1,41 @@
+Name: Yibo Ji
+USC ID: 8317398887
+News site crawled: http://www.nbcnews.com/
+
+Fetch Statistics:
+================
+# fetches attempted: 9967
+# fetches succeeded: 9694
+# fetches aborted: 100
+# fetches failed: 173
+
+Outgoing URLs:
+================
+Total URLs extracted: 843812
+# unique URLs extracted: 99353
+# unique URLs within News Site: 22390
+# unique URLs outside News Site: 76963
+
+Status Codes:
+================
+404: 167
+500: 6
+200: 9694
+301: 70
+302: 30
+
+File Sizes:
+================
+< 1KB: 2
+1KB ~ <10KB: 3
+10KB ~ <100KB: 3747
+100KB ~ <1MB: 5914
+>= 1MB: 28
+
+Content Types:
+================
+image/png: 1
+text/html: 9684
+application/rss+xml: 1
+image/vnd.microsoft.icon: 1
+text/css: 7

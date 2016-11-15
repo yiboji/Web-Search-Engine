@@ -1,0 +1,158 @@
+<style type="text/css">
+	.dropdown-content {
+	    display: none;
+	    position: absolute;
+	    background-color: #f9f9f9;
+	    min-width: 160px;
+	    overflow: auto;
+	    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	}
+
+	.dropdown-content a {
+	    color: black;
+	    padding: 12px 16px;
+	    text-decoration: none;
+	    display: block;
+	}
+	.dropdown a:hover {background-color: #f1f1f1}
+	.show {display:block;}
+
+</style>
+<form id="default" method="get" action="/search">
+	<input id="search" type="text" name="search"/>
+	<input type="submit" val="submit_default"/>
+</form>
+<div id="dropdown" class="dropdown-content"></div>
+<div id="correction"></div>
+<table id="results"></table>
+<br/>
+<table id="results_pagerank"></table>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>  
+<script>
+	$(document).ready(function(){
+		$('#search').on('input',suggest);
+		$('#default').submit(function(e){
+			e.preventDefault();
+			hideSuggestion();
+			spellCheck();
+			search();
+			// search_pageRank();
+		});
+	});
+
+	var search = function(){
+		$.ajax({
+			method:"GET",
+			url:"http://localhost:5000/search",
+			data:{
+				search: $('#search').val()
+			}
+		}).done(function(msg){
+			$('#results').empty();
+			// $('#results').append('<caption>Results</caption>');
+			msg.response.docs.forEach(function(item){
+				var id = item.id;
+				var arr = id.split("/");
+				// $('#results').append('<tr><td><a href="file://'+item.id+'">'+arr[arr.length-1]+'</a></td></tr>');
+				var filename = arr[arr.length-1];
+				getSnippet(filename);
+				$('#results').append('<tr><td><a href="http://localhost:5000/getHTML?filename='+arr[arr.length-1]+'">'+arr[arr.length-1]+'</a><div id="'+filename.split('.')[0]+'"></div></td></tr>');
+			});
+		});
+	}
+	var search_pageRank = function(){
+		$.ajax({
+			method:"GET",
+			url:"http://localhost:5000/searchpagerank",
+			data:{
+				search: $('#search').val()
+			}
+		}).done(function(msg){
+			$('#results_pagerank').empty();
+			$('#results_pagerank').append('<caption>pageRank results</caption>');
+			msg.response.docs.forEach(function(item){
+				var id = item.id;
+				var arr = id.split("/");
+				$('#results_pagerank').append('<tr><td><a href="file://'+item.id+'">'+arr[arr.length-1]+'</a></td></tr>');
+			});
+		});
+	}
+	var suggest = function(){
+		$.ajax({
+			method:"GET",
+			url:"http://localhost:5000/suggest",
+			data:{
+				search: $('#search').val()
+			}
+		}).done(function(msg){
+			$('#dropdown').empty();
+			if(msg.legnth!=0){
+				for(var key in msg.suggest.suggest){
+					var arr = msg.suggest.suggest[key].suggestions;
+					var searchStr = $('#search').val();
+					var cnt = 0;
+					if(searchStr.length==1) cnt = 8;
+					else if(searchStr.length==2) cnt = 5;
+					else cnt = 2;
+					for(var i=0; i<cnt&&i<arr.length; i++){
+						var term = arr[i].term;
+						$('#dropdown').append('<a href="#" onclick="return fillBySuggestion(\''+term+'\');">'+term+'</a>');
+					}
+				}
+				showSuggestion();
+			}
+		});
+	}
+	var spellCheck = function(){
+		$("#correction").empty();
+		$.ajax({
+			method:"GET",
+			url:"http://localhost:5000/spellcheck",
+			data:{
+				search: $('#search').val()
+			}
+		}).done(function(msg){
+			if(msg.toLowerCase()===$('#search').val().toLowerCase()) return;
+			$("#correction").append("Do you mean: <a href='#' style='color:red' onclick='return resubmitForm(\""+msg+"\")'>"+msg+"?</a>");
+		});
+	}
+	var showSuggestion = function(){
+		$("#dropdown").show();
+	}
+
+	var hideSuggestion = function(){
+		$("#dropdown").hide();
+	}
+
+	var fillBySuggestion = function(text){
+		$("#search").val(text);
+		hideSuggestion();
+		return true;
+	}
+
+	var resubmitForm = function(text){
+		console.log("resubmit: "+text);
+		$("#search").val(text);
+		$('#default').submit();
+		return true;
+	}
+
+	var getSnippet = function(filename){
+		console.log(filename);
+		$.ajax({
+			method:"GET",
+			url:"http://localhost:5000/getSnippet",
+			data:{
+				search: $('#search').val(),
+				filename: filename
+			}
+		}).done(function(msg){
+			console.log(msg);
+			if(msg.length!=0){
+				$("#"+filename.split('.')[0]).append("<fieldset>"+msg+"...</fieldset>");
+			}
+		});		
+	}
+
+</script>

@@ -1,0 +1,46 @@
+Name: Yibo Ji
+USC ID: 8317398887
+News site crawled: http://www.wsj.com/
+
+Fetch Statistics:
+================
+# fetches attempted: 9998
+# fetches succeeded: 9366
+# fetches aborted: 604
+# fetches failed: 28
+
+Outgoing URLs:
+================
+Total URLs extracted: 1818187
+# unique URLs extracted: 43760
+# unique URLs within News Site: 20180
+# unique URLs outside News Site: 23580
+
+Status Codes:
+================
+400: 1
+404: 25
+503: 1
+200: 9366
+504: 1
+301: 436
+302: 168
+
+File Sizes:
+================
+< 1KB: 8
+1KB ~ <10KB: 18
+10KB ~ <100KB: 3731
+100KB ~ <1MB: 5608
+>= 1MB: 1
+
+Content Types:
+================
+image/png: 2
+text/html: 9328
+image/jpeg: 3
+application/pdf: 4
+image/gif: 18
+image/x-icon: 2
+text/xml: 7
+text/css: 2
